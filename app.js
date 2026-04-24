@@ -11,35 +11,31 @@ const rateInfo = document.getElementById('rate-info');
 const historyList = document.getElementById('history-list');
 const baseSymbol = document.getElementById('base-symbol');
 
-const API_URL = "https://api.exchangerate-api.com/v4/latest/";
-
 const currencySymbols = {
-    USD: "$", EUR: "€", GBP: "£", JPY: "¥", AUD: "A$", CAD: "C$", CHF: "CHF", 
-    CNY: "¥", INR: "₹", BRL: "R$", RUB: "₽", KRW: "₩", MXN: "$", NZD: "$",
-    SGD: "$", HKD: "$", NOK: "kr", SEK: "kr", TRY: "₺", ZAR: "R"
+    USD: "$", EUR: "€", GBP: "£", JPY: "¥", AUD: "A$", CAD: "C$", INR: "₹", 
+    AED: "د.إ", CNY: "¥", SGD: "S$"
 };
 
-const currencies = [
-    "USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR", "BRL", 
-    "RUB", "KRW", "MXN", "NZD", "SGD", "HKD", "NOK", "SEK", "TRY", "ZAR",
-    "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AWG", "AZN", "BAM",
-    "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BSD", "BTN",
-    "BWP", "BYN", "BZD", "CDF", "CLP", "COP", "CRC", "CUP", "CVE", "CZK",
-    "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "FJD", "FKP", "FOK",
-    "GEL", "GGP", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HNL", "HRK",
-    "HTG", "HUF", "IDR", "ILS", "IMP", "IQD", "IRR", "ISK", "JEP", "JMD",
-    "JOD", "KES", "KGS", "KHR", "KID", "KMF", "KWD", "KYD", "KZT", "LAK",
-    "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK",
-    "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MYR", "MZN", "NAD", "NGN",
-    "NIO", "NPR", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG",
-    "QAR", "RON", "RSD", "RWF", "SAR", "SBD", "SCR", "SDG", "SHP", "SLE",
-    "SLL", "SOS", "SRD", "SSP", "STN", "SYP", "SZL", "THB", "TJS", "TMT",
-    "TND", "TOP", "TVD", "TWD", "TZS", "UAH", "UGX", "UYU", "UZS", "VES",
-    "VND", "VUV", "WST", "XAF", "XCD", "XDR", "XOF", "XPF", "YER", "ZMW"
-];
+const exchangeRates = {
+    USD: 1.0,
+    EUR: 0.94,
+    GBP: 0.81,
+    JPY: 154.50,
+    INR: 83.50,
+    AUD: 1.55,
+    CAD: 1.37,
+    AED: 3.67,
+    CNY: 7.24,
+    SGD: 1.36
+};
+
+const currencies = Object.keys(exchangeRates);
 
 // Initialize dropdowns
 function init() {
+    fromSelect.innerHTML = '';
+    toSelect.innerHTML = '';
+    
     currencies.forEach(currency => {
         const opt1 = document.createElement('option');
         opt1.value = currency;
@@ -76,13 +72,17 @@ async function convert() {
     convertBtn.textContent = "Converting...";
     convertBtn.disabled = true;
 
-    try {
-        const response = await fetch(`${API_URL}${from}`);
-        const data = await response.json();
-        
-        if (data.result === "error") throw new Error("API Error");
+    // Simulate network delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 400));
 
-        const rate = data.rates[to];
+    try {
+        const fromRate = exchangeRates[from];
+        const toRate = exchangeRates[to];
+        
+        if (!fromRate || !toRate) throw new Error("Rate not found");
+
+        // Convert to USD first (base), then to target currency
+        const rate = toRate / fromRate;
         const result = (amount * rate).toFixed(2);
         
         const toSymbol = currencySymbols[to] || "";
@@ -94,7 +94,7 @@ async function convert() {
 
     } catch (error) {
         console.error("Conversion failed:", error);
-        rateInfo.textContent = "Error fetching rates. Please try again.";
+        rateInfo.textContent = "Conversion error. Please try again.";
         convertedText.textContent = "---";
     } finally {
         convertBtn.textContent = "Convert Now";
@@ -144,6 +144,9 @@ function loadHistory() {
             `;
             historyList.appendChild(div);
         });
+    }, (error) => {
+        console.error("History listener failed:", error);
+        historyList.innerHTML = '<p class="empty-msg">Unable to load history.</p>';
     });
 }
 
