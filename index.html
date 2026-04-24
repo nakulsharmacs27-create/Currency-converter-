@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalX | Premium Currency Converter</title>
+    <meta name="description" content="Fast, accurate, and premium currency conversion with real-time rates.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="converter-container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">💸</span>
+                <h1>GlobalX</h1>
+            </div>
+            <p class="subtitle">Real-time Currency Exchange</p>
+        </header>
+
+        <section class="card glass">
+            <div class="input-group">
+                <label for="amount">Amount</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol" id="base-symbol">₹</span>
+                    <input type="number" id="amount" placeholder="0.00" value="100">
+                </div>
+            </div>
+
+            <div class="selection-grid">
+                <div class="select-box">
+                    <label>From</label>
+                    <select id="from-currency">
+                        <!-- Currencies populated by JS -->
+                    </select>
+                </div>
+
+                <div class="swap-btn" id="swap-currencies">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+
+                <div class="select-box">
+                    <label>To</label>
+                    <select id="to-currency">
+                        <!-- Currencies populated by JS -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="result-area">
+                <div class="rate-info" id="rate-info">Getting latest rates...</div>
+                <div class="converted-amount" id="converted-amount">---</div>
+            </div>
+
+            <button id="convert-btn" class="primary-btn">Convert Now</button>
+        </section>
+
+        <section class="history-section glass">
+            <h2>Recent Conversions</h2>
+            <div class="history-list" id="history-list">
+                <p class="empty-msg">No history yet.</p>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
